@@ -11,18 +11,6 @@
 /* defines                                                              */
 /************************************************************************/
 
-//#define LED_PIO           PIOC                 // periferico que controla o LED
-// # (1)
-//#define LED_PIO_ID        ID_PIOC                  // ID do periférico PIOC (controla LED)
-//#define LED_PIO_IDX       8                    // ID do LED no PIO
-//#define LED_PIO_IDX_MASK  (1u << LED_PIO_IDX)   // Mascara para CONTROLARMOS o LED
-
-// Configuracoes do botao
-//#define BUT_PIO           PIOA
-//#define BUT_PIO_ID        ID_PIOA
-//#define BUT_PIO_IDX       11
-//#define BUT_PIO_IDX_MASK (1u << BUT_PIO_IDX) // esse já está pronto.
-
 //configuracoes do LED 1 (PA0)
 #define OLED_LED_1              PIOA
 #define OLED_LED_1_ID           ID_PIOA
@@ -166,6 +154,7 @@ int main (void)
 	sysclk_init();
 	delay_init();
 	int frequencia_default = 500;
+	char str[128];
 	
 	// Inicializa clock
 	sysclk_init();
@@ -181,8 +170,8 @@ int main (void)
   
   
 	gfx_mono_draw_filled_circle(20, 16, 16, GFX_PIXEL_SET, GFX_WHOLE);
-	gfx_mono_draw_string("mundo", 50,16, &sysfont);
-  
+	sprintf(str, "%d", frequencia_default);
+	gfx_mono_draw_string(str, 50, 16, &sysfont);
   
 
   /* Insert application code here, after the board has been initialized. */
@@ -196,8 +185,10 @@ int main (void)
 				pisca_led(5, frequencia_default += 100);
 				but_flag2 = 0;
 			}
-			
 			pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
+			
+			sprintf(str, "%d", frequencia_default);
+			gfx_mono_draw_string(str, 50, 16, &sysfont);
 			
 	}
 }
