@@ -57,6 +57,8 @@
 
 volatile char but_flag1;
 volatile char but_flag2;
+volatile char stop_tempo;
+volatile char start_tempo;
 
 /************************************************************************/
 /* prototypes                                                           */
@@ -70,10 +72,11 @@ void pisca_led(int n, int t);
 void but_callback1(void)
 {
 	if (pio_get(OLED_BUT1, PIO_INPUT, OLED_BUT1_IDX_MASK)) {
-        but_flag1 = 1; // PINO == 1 --> Borda de subida
+		stop_tempo = 1;// PINO == 1 --> Borda de subida
+		start_tempo = 0;
     } else {
-		but_flag1 = 0; // PINO == 0 --> Borda de descida
-    } 
+		start_tempo = 1; // PINO == 0 --> Borda de descida
+    }
 }
 
 void but_callback2(void)
@@ -159,6 +162,7 @@ int main (void)
 	delay_init();
 	int frequencia_default = 500;
 	char str[128];
+	int tempo = 0;
 	
 	// Inicializa clock
 	sysclk_init();
@@ -181,17 +185,22 @@ int main (void)
   /* Insert application code here, after the board has been initialized. */
 	while(1) {
 			pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
+			
+			while(start_tempo){
+				delay_ms(100);
+				tempo += 100;
+			}
+			
+			if(stop_tempo){
+				stop_tempo = 0;
+				if(tempo < 1000){
+					frequencia_default -= 100;
+				} else{
+					frequencia_default += 100;
+				}
+				tempo = 0;
+			}
 
-			
-			if(but_flag1){
-				frequencia_default -= 100;
-				but_flag1 = 0;
-			}
-			if(but_flag2){
-				frequencia_default += 100;
-				but_flag2 = 0;
-			}
-			
 			sprintf(str, "%d", frequencia_default);
 			gfx_mono_draw_string(str, 50, 16, &sysfont);			
 			pisca_led(5, frequencia_default);
