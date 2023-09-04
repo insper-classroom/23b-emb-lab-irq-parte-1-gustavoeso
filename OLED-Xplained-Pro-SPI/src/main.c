@@ -69,7 +69,11 @@ void pisca_led(int n, int t);
 /************************************************************************/
 void but_callback1(void)
 {
-	but_flag1 = 1;
+	if (pio_get(OLED_BUT1, PIO_INPUT, OLED_BUT1_IDX_MASK)) {
+        but_flag1 = 1; // PINO == 1 --> Borda de subida
+    } else {
+		but_flag1 = 0; // PINO == 0 --> Borda de descida
+    } 
 }
 
 void but_callback2(void)
@@ -117,7 +121,7 @@ void io_init(void)
 	pio_handler_set(OLED_BUT1,
 	OLED_BUT1_ID,
 	OLED_BUT1_IDX_MASK,
-	PIO_IT_RISE_EDGE,
+	PIO_IT_EDGE,
 	but_callback1);
 	
 	// Configura interrupção no pino referente ao botao 2 e associa
@@ -176,19 +180,21 @@ int main (void)
 
   /* Insert application code here, after the board has been initialized. */
 	while(1) {
+			pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
+
 			
 			if(but_flag1){
-				pisca_led(5, frequencia_default -= 100);
+				frequencia_default -= 100;
 				but_flag1 = 0;
 			}
 			if(but_flag2){
-				pisca_led(5, frequencia_default += 100);
+				frequencia_default += 100;
 				but_flag2 = 0;
 			}
-			pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
 			
 			sprintf(str, "%d", frequencia_default);
-			gfx_mono_draw_string(str, 50, 16, &sysfont);
-			
+			gfx_mono_draw_string(str, 50, 16, &sysfont);			
+			pisca_led(5, frequencia_default);
+
 	}
 }
