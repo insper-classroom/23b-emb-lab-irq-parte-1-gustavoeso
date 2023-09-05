@@ -212,7 +212,7 @@ int main (void)
 	int delay = 500;
 	char str[128];
 	int tempo = 0;
-	int j = 0;
+	int i = 0;
 	
 	// Inicializa clock
 	sysclk_init();
@@ -259,9 +259,9 @@ int main (void)
 		gfx_mono_draw_string(str, 50, 16, &sysfont);
 		
 		if(but_flag1){
-			j = pisca_led(30, delay, i);
-			if(j >= 30){
-				j = 0;
+			i = pisca_led(30, delay, i);
+			if(i >= 30){
+				i = 0;
 			}
 			but_flag1 = 0;
 		}
@@ -270,9 +270,9 @@ int main (void)
 			delay += 100;
 			sprintf(str, "%lf", (double)500/delay);
 			gfx_mono_draw_string(str, 50, 16, &sysfont);
-			j = pisca_led(30, delay, i);
-			if(j >= 30){
-				j = 0;
+			i = pisca_led(30, delay, i);
+			if(i >= 30){
+				i = 0;
 			}
 			but_flag3 = 0;	
 		}
