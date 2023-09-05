@@ -106,6 +106,9 @@ void but3_callback(void)
 // pisca led N vez no periodo T
 int pisca_led(int n, int t, int i){
 	for (;i<n;i++){
+
+		gfx_mono_draw_rect(i, 5, 2, 10, GFX_PIXEL_SET);
+	
 		pio_clear(OLED_LED_1, OLED_LED_1_IDX_MASK);
 		delay_ms(t);
 		pio_set(OLED_LED_1, OLED_LED_1_IDX_MASK);
@@ -224,7 +227,7 @@ int main (void)
 	gfx_mono_ssd1306_init();
 	
 	
-	gfx_mono_draw_filled_circle(20, 16, 16, GFX_PIXEL_SET, GFX_WHOLE);
+	//gfx_mono_draw_filled_circle(20, 16, 16, GFX_PIXEL_SET, GFX_WHOLE);
 	sprintf(str, "%lf", (double)500/delay);
 	gfx_mono_draw_string(str, 50, 16, &sysfont);
 	
@@ -256,8 +259,8 @@ int main (void)
 		gfx_mono_draw_string(str, 50, 16, &sysfont);
 		
 		if(but_flag1){
-			i = pisca_led(5, delay, i);
-			if(i >= 5){
+			i = pisca_led(30, delay, i);
+			if(i >= 30){
 				i = 0;
 			}
 			but_flag1 = 0;
@@ -267,13 +270,19 @@ int main (void)
 			delay += 100;
 			sprintf(str, "%lf", (double)500/delay);
 			gfx_mono_draw_string(str, 50, 16, &sysfont);
-			i = pisca_led(5, delay, i);
-			if(i >= 5){
+			i = pisca_led(30, delay, i);
+			if(i >= 30){
 				i = 0;
 			}
 			but_flag3 = 0;	
 		}
 		
+		for(int i=30;i>=0;i-=2){
+			
+			gfx_mono_draw_rect(i, 5, 2, 10, GFX_PIXEL_CLR);
+			delay_ms(10);
+			
+		}
 		
 		pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
 	}
